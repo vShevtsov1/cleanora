@@ -16,7 +16,6 @@ public class price {
     @Column(name = "priceId")
     private String priceId;
 
-
     @Column(name = "priceTittle")
     private String priceTittle;
 
