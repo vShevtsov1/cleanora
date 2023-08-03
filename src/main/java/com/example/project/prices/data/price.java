@@ -17,6 +17,7 @@ public class price {
     private String priceId;
 
 
+
     @Column(name = "priceTittle")
     private String priceTittle;
 
