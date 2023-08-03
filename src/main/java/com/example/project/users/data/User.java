@@ -32,7 +32,11 @@ public class User {
     @Column(name = "userPassword")
     private String userPassword;
 
-
-
-
+    public User(String userName, String userEmail, String userPhoneNumber, com.example.project.users.data.help.userRole userRole, String userPassword) {
+        this.userName = userName;
+        this.userEmail = userEmail;
+        this.userPhoneNumber = userPhoneNumber;
+        this.userRole = userRole;
+        this.userPassword = userPassword;
+    }
 }

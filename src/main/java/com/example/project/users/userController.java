@@ -1,9 +1,8 @@
 package com.example.project.users;
 
 import com.example.project.users.Services.userService;
-import com.example.project.users.data.DTO.userDTO;
-import com.example.project.users.data.DTO.userLoginResponse;
-import com.example.project.users.data.userLogin;
+import com.example.project.users.data.DTO.*;
+import com.example.project.users.data.help.resetPassRequestStatus;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +19,7 @@ public class userController {
         this.userService = userService;
     }
 
-    @GetMapping("/getById/{userId}")
+    @GetMapping("/getById")
     public ResponseEntity<userDTO> getUserById(@RequestParam("userId") Long userId){
         try {
             return ResponseEntity.ok(modelMapper.map(userService.getUserById(userId), userDTO.class));
@@ -29,10 +28,31 @@ public class userController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<userLoginResponse> login(@RequestBody userLogin userLogin){
-
+    @PostMapping("/register")
+    private ResponseEntity<userRegisterStatusDTO> registerNewUser(@RequestBody userRegisterDTO userRegisterDTO){
+        try {
+            return ResponseEntity.ok(userService.register(userRegisterDTO));
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
     }
-
+    @PostMapping("/login")
+    public ResponseEntity<loginResponseDTO> login(@RequestBody userLogin userLogin){
+        try {
+            return ResponseEntity.ok(userService.login(userLogin));
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
+    @GetMapping("/password-reset/request")
+    public ResponseEntity<resetPassRequestStatus> passwordResetRequest(@RequestParam("userEmail")String userEmail){
+        try {
+            return ResponseEntity.ok(userService.requestResetPassword(userEmail));
+        }
+        catch (Exception e){
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

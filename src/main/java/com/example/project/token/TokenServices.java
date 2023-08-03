@@ -17,9 +17,11 @@ import java.util.Date;
 public class TokenServices {
     @Value("${jwt.secret}")
     private String jwtSecret;
+    @Value("${jwt.secret.password.reset}")
+    private String jwtSecretPassReset;
 
     public String generateTokenUser(User user) {
-        Date date = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+        Date date = Date.from(Instant.now().plus(364, ChronoUnit.DAYS));
         String jws = Jwts.builder().
                 setSubject(user.getUserEmail()).
                 claim("role", user.getUserRole()).
@@ -27,8 +29,23 @@ public class TokenServices {
                 signWith(SignatureAlgorithm.HS256, jwtSecret).compact();
         return jws;
     }
-
-
+    public String generateTokenReset(User user) {
+        Date date = Date.from(Instant.now().plus(1, ChronoUnit.DAYS));
+        String jws = Jwts.builder().
+                setSubject(user.getUserEmail()).
+                claim("role", user.getUserRole()).
+                setExpiration(date).
+                signWith(SignatureAlgorithm.HS256, jwtSecretPassReset).compact();
+        return jws;
+    }
+    public boolean validateTokenReset(String token) {
+        try {
+            Jwts.parser().setSigningKey(jwtSecretPassReset).parseClaimsJws(token);
+            return true;
+        } catch (JwtException e) {
+            return false;
+        }
+    }
 
     public boolean validateToken(String token) {
         try {
@@ -50,6 +67,13 @@ public class TokenServices {
     public String getMail(String token) {
         Claims claims = Jwts.parser()
                 .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.getSubject();
+    }
+    public String getMailReset(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecretPassReset)
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
